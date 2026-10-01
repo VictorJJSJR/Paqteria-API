@@ -1,0 +1,17 @@
+services:
+  api:
+    build:
+      context: ./api
+    env_file: .env
+    environment:
+      API_PUERTO: 8443
+      API_TLS_KEYSTORE: file:/run/secrets/api-keystore.p12
+      API_TLS_KEYSTORE_PASSWORD: ${API_TLS_KEYSTORE_PASSWORD:?Configura o genera la contraseña del certificado}
+      PAQTERIA_DB_URL: ${PAQTERIA_DB_URL:-jdbc:sqlserver://host.docker.internal:1433;databaseName=Paqteria;encrypt=true;trustServerCertificate=true;loginTimeout=30}
+      PAQTERIA_JWT_SECRETO_BASE64: ${PAQTERIA_JWT_SECRETO_BASE64:?Genera el secreto JWT}
+    ports:
+      - "8443:8443"
+    volumes:
+      - ./api/secrets/api-keystore.p12:/run/secrets/api-keystore.p12:ro
+    restart: unless-stopped
+
